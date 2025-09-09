@@ -36,6 +36,6 @@
     "typescript": "^5"
   },
   "lint-staged": {
-    "*": "yarn lint"
+    "*": "pnpm lint"
   }
 }
