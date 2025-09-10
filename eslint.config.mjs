@@ -30,7 +30,7 @@ export default antfu(
         "error",
         {
           case: "kebabCase",
-          ignore: ["README.md"],
+          ignore: ["README.md", "node_modules", "LICENSE", ".pnpm-store"],
         },
       ],
     },
