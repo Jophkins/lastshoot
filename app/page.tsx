@@ -13,7 +13,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="mt-10 flex items-center justify-center text-amber-400">
+      <div className="mt-10 flex items-center justify-center text-amber-400 overflow-hidden">
         <div className="embla border-4 border-green-600" ref={emblaRef}>
           <div className="embla__container max-w-120 max-h-120 w-auto h-auto">
             <div className="embla__slide"><img src={pizzaPics[0]} alt="" /></div>
