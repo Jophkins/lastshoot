@@ -3,6 +3,7 @@ import Autoplay from "embla-carousel-autoplay";
 import Fade from "embla-carousel-fade";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
+import React from "react";
 
 export default function Home() {
   const pizzaPics = [
@@ -23,7 +24,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* <MasonryGallery />  //just testing */}
     </>
   );
 }
