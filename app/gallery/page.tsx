@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+
+import ModalPic from "@/components/shared/modal-pic";
 
 type Picture = {
   id: string;
@@ -13,6 +15,7 @@ export default function GalleryPage() {
   const [pictures, setPictures] = useState<Picture[]>([]);
   const [cursor, setCursor] = useState<number | null>(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -84,6 +87,7 @@ export default function GalleryPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
+      <button className="p-4 bg-amber-500 border-3 rounded cursor-pointer hover:bg-amber-950" onClick={() => setIsModalOpen(true)}>MODAL</button>
       <div className="grid grid-cols-3 gap-4">
         {columns.map((col, colIndex) => (
           <div
@@ -118,6 +122,8 @@ export default function GalleryPage() {
           That&apos;s all for now
         </p>
       )}
+      {isModalOpen && <ModalPic onClose={() => setIsModalOpen(false)} />}
+      {/* <MasonryGallery />  //just testing */}
     </div>
   );
 }
