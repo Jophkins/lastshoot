@@ -16,6 +16,7 @@ export default function GalleryPage() {
   const [cursor, setCursor] = useState<number | null>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+  const [pictureForModal, setPictureForModal] = React.useState<Picture | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -98,6 +99,10 @@ export default function GalleryPage() {
           >
             {col.map(picture => (
               <Image
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setPictureForModal(picture);
+                }}
                 key={picture.id}
                 src={picture.url}
                 alt={picture.alt ?? ""}
@@ -122,7 +127,7 @@ export default function GalleryPage() {
           That&apos;s all for now
         </p>
       )}
-      {isModalOpen && <ModalPic onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && pictureForModal && <ModalPic onClose={() => setIsModalOpen(false)} picture={pictureForModal} />}
       {/* <MasonryGallery />  //just testing */}
     </div>
   );
