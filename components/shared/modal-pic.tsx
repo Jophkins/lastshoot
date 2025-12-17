@@ -24,24 +24,21 @@ function ModalPic({ onClose, picture }: ModalPicProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto border-2 border-green-300 p-12" onClick={onClose}>
-      <div className="bg-lime-200 flex items-end justify-center min-h-[calc(100vh-120px)] pb-20 text-center sm:block sm:p-0 border-4" onClick={stopPropagation}>
-        <div>
-          Header
-          <button className="cursor-pointer" onClick={onClose}>X</button>
-        </div>
-        <div>
-          Body
-          <div className="relative max-h-[70vh] max-w-[80vw] w-full h-[70vh] p-4 border-2 border-violet-800">
-            <Image className="object-contain" priority sizes="80vw" src={picture.url} alt={picture.alt || "Image"} fill />
-          </div>
-        </div>
-        <div>
-          Footer
-        </div>
-      </div>
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
 
+  return (
+    <div className="fixed inset-0 z-50 bg-white/90 overflow-y-auto border-2 border-green-300 p-12" onClick={onClose}>
+      <div className="bg-lime-500 flex items-center justify-center min-h-[calc(100vh-120px)] p-20 text-center border-2" onClick={stopPropagation}>
+        <div className="relative flex justify-center max-h-[70vh] max-w-[80vw] w-full h-[70vh] p-4 border-2 border-violet-800">
+          <Image className="object-fill" priority sizes="80vw" src={picture.url} alt={picture.alt || "Image"} fill />
+        </div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque, laboriosam?</p>
+      </div>
     </div>
   );
 }
