@@ -88,7 +88,6 @@ export default function GalleryPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <button className="p-4 bg-amber-500 border-3 rounded cursor-pointer hover:bg-amber-950" onClick={() => setIsModalOpen(true)}>MODAL</button>
       <div className="grid grid-cols-3 gap-4">
         {columns.map((col, colIndex) => (
           <div
