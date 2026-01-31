@@ -51,6 +51,15 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.13
+      '@testing-library/jest-dom':
+        specifier: ^6.8.0
+        version: 6.8.0
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0
+      '@testing-library/user-event':
+        specifier: ^14.6.1
+        version: 14.6.1
       '@types/node':
         specifier: ^20
         version: 20.19.13
@@ -60,6 +69,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.1.9(@types/react@19.1.12)
+      '@vitest/coverage-v8':
+        specifier: ^3.2.4
+        version: 3.2.4
       eslint:
         specifier: ^9.35.0
         version: 9.35.0(jiti@2.5.1)
@@ -72,6 +84,9 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0
       lint-staged:
         specifier: ^16.1.6
         version: 16.1.6
@@ -84,6 +99,9 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.2
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4
 
 packages:
 
