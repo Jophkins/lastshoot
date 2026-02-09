@@ -340,4 +340,15 @@ Auth options:
 - “Moved EXIF parsing to client to avoid Vercel runtime limits.”
 - “Switched preview format from JPG to WebP for size reduction.”
 
+### Decisions made during MVP implementation:
+
+- **Prisma 7 with @prisma/adapter-pg**: Prisma 7 removed `url` from datasource block. Created `prisma.config.ts` for migrations and use `PrismaPg` adapter in client. Trade-off: slightly more boilerplate vs Prisma 6, but aligns with Prisma's direction.
+- **NextAuth v5 (beta) with Credentials provider, JWT sessions**: Single-user admin doesn't need DB sessions. Credentials checked against `ADMIN_USERNAME`/`ADMIN_PASSWORD_HASH` env vars. Trade-off: no OAuth convenience, but simplest possible setup for single-user.
+- **ESLint `node/no-process-env` policy**: Kept strict rule globally but added override for `lib/env/**`, `lib/db/**`, and `prisma/**`. All env access funneled through `lib/env/server.ts` (zod-validated).
+- **Preview/thumb generated in browser (canvas)**: Per agents.md MVP strategy. WebP output at ~1600px and ~400px. Trade-off: relies on browser capabilities, no server-side fallback yet.
+- **EXIF extraction in browser via exifr, GPS excluded**: `gps: false` in exifr config, GPS fields never stored. Only safe metadata fields persisted.
+- **Cursor-based pagination by ID**: Switched from numeric offset to Prisma cursor pagination using cuid IDs. More efficient for large datasets.
+- **DigitalOcean Spaces with S3 SDK**: Using `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner`. Originals get `private` ACL, preview/thumb get `public-read`.
+- **next.config.ts remotePatterns for Spaces**: Added wildcard patterns for `*.digitaloceanspaces.com` and `*.cdn.digitaloceanspaces.com`.
+
 ## 17) Feel free to add something at your discretion after my approval.

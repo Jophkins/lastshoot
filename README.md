@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lastshoot — Personal Photography Portfolio
+
+A minimal personal photography portfolio built with Next.js (App Router), Postgres, and DigitalOcean Spaces.
+
+## Tech Stack
+
+- **Next.js 15** (App Router, Turbopack)
+- **TypeScript**
+- **Tailwind CSS** + shadcn/ui
+- **Postgres** + Prisma 7
+- **DigitalOcean Spaces** (S3-compatible object storage)
+- **NextAuth v5** (single-user Credentials auth)
+- **Zod** for runtime validation
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20.19+ / 22.12+ / 24+
+- pnpm
+- PostgreSQL (local or hosted)
+- DigitalOcean Spaces bucket (or any S3-compatible storage)
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Copy environment file and fill in values
+cp .env.example .env
+
+# Generate Prisma client
+pnpm db:generate
+
+# Run database migrations
+pnpm db:migrate
+
+# Start development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See `.env.example` for the full list. Key variables:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `DATABASE_URL` — Postgres connection string
+- `NEXTAUTH_URL` — App base URL (e.g. `http://localhost:3000`)
+- `NEXTAUTH_SECRET` — Random secret for JWT signing
+- `ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH` — Single admin credentials (bcrypt hash)
+- `STORAGE_*` — DigitalOcean Spaces configuration
+- `STORAGE_PUBLIC_BASE_URL` — CDN/public URL for serving images
 
-## Learn More
+### Generate Admin Password Hash
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('your-password', 12).then(h => console.log(h))"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Available Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Script             | Description                      |
+| ------------------ | -------------------------------- |
+| `pnpm dev`         | Start dev server with Turbopack  |
+| `pnpm build`       | Production build                 |
+| `pnpm lint`        | Run ESLint                       |
+| `pnpm typecheck`   | Run TypeScript type checking     |
+| `pnpm db:generate` | Generate Prisma client           |
+| `pnpm db:migrate`  | Run Prisma migrations            |
+| `pnpm db:studio`   | Open Prisma Studio               |
+| `pnpm db:push`     | Push schema to DB (no migration) |
 
-## Deploy on Vercel
+## Storage CORS Configuration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Your Spaces bucket needs CORS configured to allow PUT uploads from the admin origin:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```xml
+<CORSConfiguration>
+  <CORSRule>
+    <AllowedOrigin>https://your-domain.com</AllowedOrigin>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <MaxAgeSeconds>3600</MaxAgeSeconds>
+  </CORSRule>
+</CORSConfiguration>
+```
+
+## Architecture
+
+- **Files** → DigitalOcean Spaces (original/preview/thumb variants)
+- **Metadata** → Postgres (title, description, EXIF, tags, publish state)
+- **Upload flow**: Admin selects files → EXIF extracted in browser → preview/thumb generated via canvas → signed PUT URLs → direct upload to Spaces → metadata committed to DB
+- **Public gallery**: reads only published, non-deleted photos from DB
+- **Soft-delete**: photos are never hard-deleted, `deletedAt` timestamp is used
+
+## Deployment
+
+- **App**: Vercel
+- **Database**: Supabase / Neon
+- **Storage**: DigitalOcean Spaces
+
+### Checklist
+
+- [ ] All env vars set in Vercel
+- [ ] Admin auth working
+- [ ] Storage CORS configured for production domain
+- [ ] Preview/thumb publicly accessible
+- [ ] Originals not publicly exposed
