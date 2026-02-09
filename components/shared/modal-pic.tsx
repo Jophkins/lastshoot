@@ -4,7 +4,18 @@ import React, { useEffect } from "react";
 type Picture = {
   id: string;
   url: string;
+  previewUrl?: string;
   alt?: string;
+  title?: string | null;
+  description?: string | null;
+  cameraMake?: string | null;
+  cameraModel?: string | null;
+  lensModel?: string | null;
+  focalLength?: number | null;
+  aperture?: number | null;
+  shutter?: string | null;
+  iso?: number | null;
+  takenAt?: string | null;
 };
 
 type ModalPicProps = {
@@ -31,16 +42,76 @@ function ModalPic({ onClose, picture }: ModalPicProps) {
     };
   }, []);
 
+  const displayUrl = picture.previewUrl ?? picture.url;
+
+  const hasExif = picture.cameraMake
+    || picture.cameraModel
+    || picture.lensModel
+    || picture.focalLength
+    || picture.aperture
+    || picture.shutter
+    || picture.iso;
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 overflow-y-auto p-16" onClick={onClose}>
-      <div className="relative bg-white rounded flex flex-col gap-4 p-4 sm:flex-row sm:gap-8 sm:p-10 items-center justify-center min-h-[calc(100vh-120px)]" onClick={stopPropagation}>
-        <span className="absolute top-2 right-4 cursor-pointer hover:text-2xl transition-all" onClick={onClose}>X</span>
-        <div className="flex flex-1 justify-center w-full sm:w-auto p-4">
-          <Image className="object-contain max-h-[80vh] max-w-[80vw] w-auto h-auto rounded" priority sizes="80vw" src={picture.url} alt={picture.alt || "Image"} width={1600} height={1600} />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 p-16" onClick={onClose}>
+      <div
+        className="relative flex min-h-[calc(100vh-120px)] flex-col items-center justify-center gap-4 rounded bg-white p-4 sm:flex-row sm:gap-8 sm:p-10"
+        onClick={stopPropagation}
+      >
+        <span
+          className="absolute right-4 top-2 cursor-pointer transition-all hover:text-2xl"
+          onClick={onClose}
+        >
+          X
+        </span>
+
+        <div className="flex w-full flex-1 justify-center p-4 sm:w-auto">
+          <Image
+            className="h-auto max-h-[80vh] w-auto max-w-[80vw] rounded object-contain"
+            priority
+            sizes="80vw"
+            src={displayUrl}
+            alt={picture.alt || "Image"}
+            width={1600}
+            height={1600}
+          />
         </div>
 
-        <p className="flex-1 sm:flex-none text-left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque, laboriosam?</p>
+        <div className="flex-1 space-y-3 text-left sm:flex-none">
+          {picture.title && (
+            <h2 className="text-lg font-semibold">{picture.title}</h2>
+          )}
+          {picture.description && (
+            <p className="text-sm text-neutral-600">{picture.description}</p>
+          )}
 
+          {hasExif && (
+            <div className="space-y-1 text-xs text-neutral-500">
+              {(picture.cameraMake || picture.cameraModel) && (
+                <p>
+                  {[picture.cameraMake, picture.cameraModel]
+                    .filter(Boolean)
+                    .join(" ")}
+                </p>
+              )}
+              {picture.lensModel && <p>{picture.lensModel}</p>}
+              <p>
+                {[
+                  picture.focalLength ? `${picture.focalLength}mm` : null,
+                  picture.aperture ? `f/${picture.aperture}` : null,
+                  picture.shutter,
+                  picture.iso ? `ISO ${picture.iso}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </div>
+          )}
+
+          {!hasExif && !picture.title && !picture.description && (
+            <p className="text-sm text-neutral-400">No details available.</p>
+          )}
+        </div>
       </div>
     </div>
   );

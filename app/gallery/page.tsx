@@ -8,12 +8,24 @@ import ModalPic from "@/components/shared/modal-pic";
 type Picture = {
   id: string;
   url: string;
+  previewUrl?: string;
   alt?: string;
+  title?: string | null;
+  description?: string | null;
+  cameraMake?: string | null;
+  cameraModel?: string | null;
+  lensModel?: string | null;
+  focalLength?: number | null;
+  aperture?: number | null;
+  shutter?: string | null;
+  iso?: number | null;
+  takenAt?: string | null;
+  tags?: string[];
 };
 
 export default function GalleryPage() {
   const [pictures, setPictures] = useState<Picture[]>([]);
-  const [cursor, setCursor] = useState<number | null>(0);
+  const [cursor, setCursor] = useState<string | null>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   const [pictureForModal, setPictureForModal] = React.useState<Picture | null>(null);
@@ -26,28 +38,28 @@ export default function GalleryPage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/pictures?cursor=${cursor}`);
+      const params = cursor ? `?cursor=${cursor}` : "";
+      const res = await fetch(`/api/pictures${params}`);
 
       if (!res.ok) {
-        console.error("Fetch failed:", res.status);
         return;
       }
 
-      const data: { pictures: Picture[]; nextCursor: number | null }
+      const data: { pictures: Picture[]; nextCursor: string | null }
         = await res.json();
 
       setPictures(prev => [...prev, ...data.pictures]);
-      setCursor(data.nextCursor ?? null);
+      setCursor(data.nextCursor);
     }
-    catch (err) {
-      console.error(err);
+    catch {
+      // silently fail — gallery will just stop loading
     }
     finally {
       setIsLoading(false);
     }
   }, [cursor, isLoading]);
 
-  // initial load
+  // initial load (intentionally empty deps — run once on mount)
   useEffect(() => {
     loadMore();
   }, []);
@@ -87,14 +99,14 @@ export default function GalleryPage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 py-8">
       <div className="grid grid-cols-3 gap-4">
         {columns.map((col, colIndex) => (
           <div
             key={colIndex}
             className={`flex flex-col gap-4 ${
               colIndex === 1 ? "mt-15" : ""
-            }`} // middle column shifted
+            }`}
           >
             {col.map(picture => (
               <Image
@@ -107,7 +119,7 @@ export default function GalleryPage() {
                 alt={picture.alt ?? ""}
                 width={800}
                 height={1200}
-                className="w-full h-auto rounded-lg object-cover"
+                className="h-auto w-full cursor-pointer rounded-lg object-cover"
               />
             ))}
           </div>
@@ -118,7 +130,7 @@ export default function GalleryPage() {
       <div ref={sentinelRef} className="h-10" />
 
       {isLoading && (
-        <p className="py-4 text-center text-sm text-neutral-500">Loading…</p>
+        <p className="py-4 text-center text-sm text-neutral-500">Loading...</p>
       )}
 
       {cursor === null && !isLoading && pictures.length > 0 && (
@@ -126,8 +138,17 @@ export default function GalleryPage() {
           That&apos;s all for now
         </p>
       )}
-      {isModalOpen && pictureForModal && <ModalPic onClose={() => setIsModalOpen(false)} picture={pictureForModal} />}
-      {/* <MasonryGallery />  //just testing */}
+
+      {pictures.length === 0 && !isLoading && cursor === null && (
+        <p className="py-12 text-center text-neutral-400">No photos yet.</p>
+      )}
+
+      {isModalOpen && pictureForModal && (
+        <ModalPic
+          onClose={() => setIsModalOpen(false)}
+          picture={pictureForModal}
+        />
+      )}
     </div>
   );
 }
