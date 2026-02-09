@@ -36,7 +36,7 @@ export default antfu(
     },
   },
   {
-    files: ["lib/env/**/*.ts"],
+    files: ["lib/env/**/*.ts", "lib/db/**/*.ts", "prisma/**/*.ts"],
     rules: {
       "node/no-process-env": "off",
     },
