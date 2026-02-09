@@ -1,9 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    domains: ["picsum.photos"],
+    remotePatterns: [
+      // Mock images (will be removed after migration to DB)
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      // DigitalOcean Spaces CDN — matches any *.digitaloceanspaces.com subdomain
+      {
+        protocol: "https",
+        hostname: "*.digitaloceanspaces.com",
+      },
+      // DigitalOcean Spaces CDN subdomain
+      {
+        protocol: "https",
+        hostname: "*.cdn.digitaloceanspaces.com",
+      },
+    ],
   },
 };
 
