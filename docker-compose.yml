@@ -1,0 +1,18 @@
+# Do not auto-load .env (it contains $ in bcrypt hashes)
+# Docker Compose only needs its own env block below
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: lastshoot-db
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: lastshoot
+      POSTGRES_PASSWORD: lastshoot
+      POSTGRES_DB: lastshoot
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
