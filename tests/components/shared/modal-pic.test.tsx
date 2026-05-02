@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import React from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import ModalPic from "../../../components/shared/modal-pic";
@@ -8,6 +9,7 @@ describe("modal pic", () => {
     id: "pic-1",
     url: "https://picsum.photos/id/1/800/1200",
     alt: "Sample picture",
+    description: "Lorem ipsum",
   };
 
   it("renders the picture and text content", () => {
